@@ -1,8 +1,35 @@
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
+import { useRoute } from "vue-router";
+import BackHome from "./BackHome.vue";
 
-defineProps(["pokemon", "pokemon_desc"]);
-defineEmits(["back"]);
+const route = useRoute();
+const pokemonDetail = ref({});
+const pokemonSpecies = ref({});
+const pokemonDesc = ref("");
+
+async function fetchAPI(url) {
+  const response = await fetch(url);
+  return await response.json();
+}
+
+onMounted(() => {
+  const name = route.params.name;
+
+  fetchAPI(`https://pokeapi.co/api/v2/pokemon/${name}`).then((data) => {
+    pokemonDetail.value = data;
+  });
+
+  fetchAPI(`https://pokeapi.co/api/v2/pokemon-species/${name}`).then((data) => {
+    pokemonSpecies.value = data;
+    pokemonDesc.value =
+      data.flavor_text_entries
+        .find((entry) => entry.language.name === "en")
+        ?.flavor_text.replace(/[\n\f]/g, " ") || "";
+  });
+});
+
+// Định nghĩa màu sắc cho các loại Pokémon
 const typeColors = {
   grass: "#78cd54",
   poison: "#a33ea1",
@@ -32,6 +59,8 @@ const statsPara = {
   "special-defense": "SPD",
   speed: "SPD",
 };
+
+// Định nghĩa màu sắc chỉ số Pokémon
 const colorLabel = {
   hp: "#df2140",
   attack: "#ff994d",
@@ -43,45 +72,44 @@ const colorLabel = {
 </script>
 
 <template>
-  <button @click="$emit('back')" class="btnBack">&larr;Back</button>
-  <div class="container">
+  <BackHome />
+  <div class="container" v-if="pokemonDetail.id">
     <div
       class="item__image"
       :style="{
         backgroundImage: `url(
-          'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.id}.png'
+          'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemonDetail.id}.png'
         )`,
       }"
     ></div>
 
     <div class="item__type">
       <span
-        v-for="type in pokemon.types"
+        v-for="type in pokemonDetail.types"
         :key="type.type.name"
         class="type_item"
-        :class="type.type.name"
         :style="{ backgroundColor: typeColors[type.type.name] }"
       >
         {{ type.type.name }}
       </span>
     </div>
     <div class="item__name">
-      {{ pokemon.name }}
+      {{ pokemonDetail.name }}
     </div>
-    <p class="item__desc">{{ pokemon_desc }}</p>
+    <p class="item__desc">{{ pokemonDesc }}</p>
     <div class="item__hei-wei">
       <div>
         <h3>Height</h3>
-        <div class="number">{{ pokemon.height }}</div>
+        <div class="number">{{ pokemonDetail.height }}</div>
       </div>
       <div>
         <h3>Weight</h3>
-        <div class="number">{{ pokemon.weight }}</div>
+        <div class="number">{{ pokemonDetail.weight }}</div>
       </div>
     </div>
-    <h3 :style="{}">Abilities</h3>
+    <h3>Abilities</h3>
     <div class="item__abilities">
-      <div v-for="ability in pokemon.abilities" :key="ability.ability.name">
+      <div v-for="ability in pokemonDetail.abilities" :key="ability.ability.name">
         <div class="abi">
           {{ ability.ability.name }}
         </div>
@@ -89,7 +117,7 @@ const colorLabel = {
     </div>
     <h3>Stats</h3>
     <div class="item__stats">
-      <div v-for="stat in pokemon.stats" :key="stat.stat.name" class="stats">
+      <div v-for="stat in pokemonDetail.stats" :key="stat.stat.name" class="stats">
         <div class="label" :style="{ backgroundColor: colorLabel[stat.stat.name] }">
           {{ statsPara[stat.stat.name] }}
         </div>
@@ -97,7 +125,11 @@ const colorLabel = {
       </div>
     </div>
   </div>
+  <div v-else>
+    <p>Loading Pokémon details...</p>
+  </div>
 </template>
+
 <style>
 .btnBack {
   display: block;
@@ -127,18 +159,15 @@ button {
 }
 .item__type {
   display: flex;
-  flex-direction: row;
   justify-content: center;
-  align-items: center;
   gap: 10px;
   font-size: 13px;
   text-transform: capitalize;
   margin-bottom: 5px;
-  span {
-    width: 100%;
-    padding: 3px 10px;
-    border-radius: 7px;
-  }
+}
+.type_item {
+  padding: 3px 10px;
+  border-radius: 7px;
 }
 .item__name {
   text-transform: capitalize;
@@ -152,35 +181,25 @@ button {
   margin-bottom: 5px;
 }
 .item__hei-wei {
-  width: 100%;
   display: flex;
   justify-content: space-evenly;
   margin-bottom: 5px;
-  div {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
 }
 .number,
 .abi {
   width: 100px;
-  margin: 5px;
   padding: 2px;
   border-radius: 30px;
   background-color: #f6f8fc;
   text-align: center;
   text-transform: capitalize;
-  margin-bottom: 5px;
 }
 .item__abilities {
-  width: 100%;
   display: flex;
   justify-content: space-evenly;
   margin-bottom: 5px;
 }
 .item__stats {
-  width: 100%;
   display: flex;
   justify-content: space-evenly;
   margin-bottom: 5px;
@@ -189,21 +208,19 @@ button {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 5px;
   padding: 5px;
   background-color: #f6f8fc;
   border-radius: 30px;
   box-shadow: #63636333 0 2px 8px;
-  margin-bottom: 5px;
-  .label {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 50%;
-    width: 25px;
-    height: 25px;
-    font-size: 10px;
-    font-weight: 700;
-  }
+}
+.label {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  width: 25px;
+  height: 25px;
+  font-size: 10px;
+  font-weight: 700;
 }
 </style>

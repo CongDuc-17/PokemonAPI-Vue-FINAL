@@ -1,8 +1,10 @@
 <script setup>
 import { ref, onMounted } from "vue";
+import { useRouter } from "vue-router";
 
 const props = defineProps(["url"]);
 defineEmits(["select-pokemon"]);
+const router = useRouter();
 async function cFetch(URL) {
   const response = await fetch(URL);
   return await response.json();
@@ -24,10 +26,14 @@ async function fetchPokemon() {
       ?.flavor_text.replace(/[\n\f]/g, " ") || "";
 }
 
+function viewPokemonDetail() {
+  sessionStorage.setItem("selectedPokemon", JSON.stringify(pokemon.value));
+  router.push("/" + pokemon.value.name);
+}
 onMounted(fetchPokemon);
 </script>
 <template>
-  <div class="item" @click="$emit('select-pokemon', pokemon, pokemon__desc)">
+  <div class="item" @click="viewPokemonDetail">
     <div class="item__id">#{{ pokemon.id }}</div>
     <div
       class="item__image"
