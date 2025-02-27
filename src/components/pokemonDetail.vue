@@ -2,6 +2,7 @@
 import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import BackHome from "./BackHome.vue";
+import pokemonEvo from "./pokemonEvo.vue";
 
 const route = useRoute();
 const pokemonDetail = ref({});
@@ -93,10 +94,13 @@ const colorLabel = {
         {{ type.type.name }}
       </span>
     </div>
+
     <div class="item__name">
       {{ pokemonDetail.name }}
     </div>
+
     <p class="item__desc">{{ pokemonDesc }}</p>
+
     <div class="item__hei-wei">
       <div>
         <h3>Height</h3>
@@ -124,6 +128,9 @@ const colorLabel = {
         <div>{{ stat.base_stat }}</div>
       </div>
     </div>
+
+    <h3>Evolution</h3>
+    <pokemonEvo :speciesUrl="`https://pokeapi.co/api/v2/pokemon-species/${pokemonDetail.id}/ `" />
   </div>
   <div v-else>
     <p>Loading Pokémon details...</p>
@@ -131,25 +138,21 @@ const colorLabel = {
 </template>
 
 <style>
-.btnBack {
-  display: block;
+a {
   position: fixed;
-  top: 5%;
-  left: 5%;
-  border-radius: 30px;
-  padding: 5px 10px;
-  box-shadow: #63636333 0 4px 8px;
-  z-index: 999;
+  top: 0%;
+  left: 0%;
+  margin-top: 20px;
+  margin-left: 20px;
 }
 .container {
   display: flex;
   flex-direction: column;
   align-items: center;
   max-width: 500px;
+  width: 100%;
 }
-button {
-  display: block;
-}
+
 .item__image {
   width: 200px;
   height: 200px;
@@ -181,9 +184,15 @@ button {
   margin-bottom: 5px;
 }
 .item__hei-wei {
+  margin-bottom: 5px;
   display: flex;
   justify-content: space-evenly;
-  margin-bottom: 5px;
+  width: 100%;
+  div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
 }
 .number,
 .abi {
@@ -198,11 +207,13 @@ button {
   display: flex;
   justify-content: space-evenly;
   margin-bottom: 5px;
+  width: 100%;
 }
 .item__stats {
   display: flex;
   justify-content: space-evenly;
   margin-bottom: 5px;
+  width: 100%;
 }
 .stats {
   display: flex;

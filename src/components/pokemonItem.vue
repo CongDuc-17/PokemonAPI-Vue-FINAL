@@ -31,6 +31,27 @@ function viewPokemonDetail() {
   router.push("/" + pokemon.value.name);
 }
 onMounted(fetchPokemon);
+
+const typeColors = {
+  grass: "#78cd54",
+  poison: "#a33ea1",
+  fire: "#ff421c",
+  flying: "#a98ff3",
+  water: "#6390f0",
+  bug: "#a6b91a",
+  normal: "#a8a77a",
+  electric: "#f7d02c",
+  ground: "#e2bf65",
+  fairy: "#d685ad",
+  fighting: "#c22e28",
+  psychic: "#f95587",
+  rock: "#f95587",
+  ghost: "#735797",
+  ice: "#96d9d6",
+  dragon: "#6f35fc",
+  dark: "#705746",
+  steel: "#b7b7ce",
+};
 </script>
 <template>
   <div class="item" @click="viewPokemonDetail">
@@ -40,12 +61,13 @@ onMounted(fetchPokemon);
       :style="`background-image: url('https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.id}.png');`"
     ></div>
     <div class="item__name">{{ pokemon.name }}</div>
-    <div class="type">
+    <div class="item__type">
       <span
         v-for="type in pokemon.types"
         :key="type.type.name"
         class="type__name"
         :class="type.type.name"
+        :style="{ backgroundColor: typeColors[type.type.name] }"
       >
         {{ type.type.name }}
       </span>
@@ -58,83 +80,19 @@ onMounted(fetchPokemon);
   flex-direction: column;
   align-items: center;
 }
-.normal {
-  background-color: #a8a77a;
-}
-
-.fighting {
-  background-color: #c22e28;
-}
-
-.flying {
-  background-color: #a98ff3;
-}
-
-.poison {
-  background-color: #a33ea1;
-}
-
-.ground {
-  background-color: #e2bf65;
-}
-
-.rock {
-  background-color: #b6a136;
-}
-
-.bug {
-  background-color: #a6b91a;
-}
-
-.ghost {
-  background-color: #735797;
-}
-
-.steel {
-  background-color: #b7b7ce;
-}
-
-.fire {
-  background-color: #ff421c;
-}
-
-.water {
-  background-color: #6390f0;
-}
-
-.grass {
-  background-color: #78cd54;
-}
-
-.electric {
-  background-color: #f7d02c;
-}
-
-.psychic {
-  background-color: #f95587;
-}
-
-.ice {
-  background-color: #96d9d6;
-}
-
-.dragon {
-  background-color: #6f35fc;
-}
-
-.dark {
-  background-color: #705746;
-}
-
-.fairy {
-  background-color: #d685ad;
-}
-
-.unknow {
-  background-color: #68a090;
-}
-
-.shadow {
-  background-color: #735797;
+.item__type {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  text-transform: capitalize;
+  margin-bottom: 5px;
+  span {
+    width: 100%;
+    padding: 3px 10px;
+    border-radius: 7px;
+  }
 }
 </style>

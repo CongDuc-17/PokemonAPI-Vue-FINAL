@@ -13,7 +13,7 @@ export default defineConfig({
     },
   },
   build: {
-    outDir: "dist", // Đảm bảo thư mục build là dist
-    emptyOutDir: true, // Xóa nội dung cũ trước khi build lại
+    outDir: "dist",
+    emptyOutDir: true,
   },
 });

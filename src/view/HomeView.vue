@@ -52,7 +52,7 @@ function handleBack() {
     />
     <template v-else>
       <div class="header">
-        <p class="heading">Pokemon API</p>
+        <h1 class="heading">Pokemon API</h1>
         <input
           class="search"
           type="text"
@@ -110,6 +110,23 @@ function handleBack() {
 .items {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
+  transition: 0.5s;
+  gap: 5px;
+  .item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 5px 5px;
+    cursor: pointer;
+    border-radius: 10px;
+    box-shadow: #f4f4f4 0 7px 29px;
+    text-transform: capitalize;
+    transition: 0.3s;
+  }
+  .item:hover {
+    box-shadow: #39393f33 0 7px 29px;
+    transition: 0.3s;
+  }
 }
 .button-load {
   margin-top: 50px;
