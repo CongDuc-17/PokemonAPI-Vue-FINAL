@@ -8,6 +8,7 @@ const route = useRoute();
 const pokemonDetail = ref({});
 const pokemonSpecies = ref({});
 const pokemonDesc = ref("");
+const isLoading = ref(true);
 
 async function fetchAPI(url) {
   const response = await fetch(url);
@@ -17,16 +18,23 @@ async function fetchAPI(url) {
 onMounted(() => {
   const name = route.params.name;
 
-  fetchAPI(`https://pokeapi.co/api/v2/pokemon/${name}`).then((data) => {
-    pokemonDetail.value = data;
-  });
+  isLoading.value = true; // Bắt đầu loading
 
-  fetchAPI(`https://pokeapi.co/api/v2/pokemon-species/${name}`).then((data) => {
-    pokemonSpecies.value = data;
+  Promise.all([
+    fetchAPI(`https://pokeapi.co/api/v2/pokemon/${name}`),
+    fetchAPI(`https://pokeapi.co/api/v2/pokemon-species/${name}`),
+  ]).then(([pokemonData, speciesData]) => {
+    pokemonDetail.value = pokemonData;
+    pokemonSpecies.value = speciesData;
+
     pokemonDesc.value =
-      data.flavor_text_entries
+      speciesData.flavor_text_entries
         .find((entry) => entry.language.name === "en")
         ?.flavor_text.replace(/[\n\f]/g, " ") || "";
+
+    setTimeout(() => {
+      isLoading.value = false; // Kết thúc loading
+    }, 1000);
   });
 });
 
@@ -74,7 +82,10 @@ const colorLabel = {
 
 <template>
   <BackHome />
-  <div class="container" v-if="pokemonDetail.id">
+  <div v-if="isLoading" class="loading-overlay">
+    <p class="loading-text">Loading Pokémon details...</p>
+  </div>
+  <div class="container" v-else-if="pokemonDetail.id">
     <div
       class="item__image"
       :style="{
@@ -138,6 +149,23 @@ const colorLabel = {
 </template>
 
 <style>
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.loading-text {
+  color: black;
+  font-size: 24px;
+  font-weight: bold;
+}
 a {
   position: fixed;
   top: 0%;

@@ -4,7 +4,7 @@ import { ref, onMounted } from "vue";
 const props = defineProps(["speciesUrl"]);
 const evolutionChain = ref([]);
 
-async function fetchEvolutionChain() {
+async function fetchEvo() {
   if (!props.speciesUrl) return;
   const speciesData = await (await fetch(props.speciesUrl)).json();
   const evolutionData = await (await fetch(speciesData.evolution_chain.url)).json();
@@ -20,11 +20,11 @@ async function fetchEvolutionChain() {
   }
 }
 
-onMounted(fetchEvolutionChain);
+onMounted(fetchEvo);
 </script>
 
 <template>
-  <div v-if="evolutionChain.length > 1" class="evolution-container">
+  <div v-if="evolutionChain.length > 1" class="evo">
     <div class="evolution">
       <div v-for="(evo, index) in evolutionChain" :key="evo.name" class="evo-stage">
         <p>{{ evo.name }}</p>
@@ -36,10 +36,10 @@ onMounted(fetchEvolutionChain);
 </template>
 
 <style>
-.evolution-container {
+.evo {
   text-align: center;
 }
-.evolution-container p {
+.evo p {
   font-weight: 600;
   text-align: center;
   text-transform: capitalize;

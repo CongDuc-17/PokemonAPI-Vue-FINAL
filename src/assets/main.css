@@ -41,7 +41,7 @@ a,
     .items {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      transition: 0.3s;
+      transition: 0.5s;
     }
   }
 }
