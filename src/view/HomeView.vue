@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="js">
 import { ref, computed } from "vue";
 import pokemon from "@/components/pokemonItem.vue";
 import pokemonDetail from "@/components/pokemonDetail.vue";

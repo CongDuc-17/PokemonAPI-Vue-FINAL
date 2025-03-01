@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="js">
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 
